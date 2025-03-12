@@ -1,11 +1,12 @@
 name: Teslamate ABRP
-version: "1.6"
+version: "1.7"
 slug: teslamate-abrp
 description: Teslamate to ABRP integration
 arch:
   - aarch64
 init: false
-
+environment:
+  PYTHONUNBUFFERED: "1"
 options:
   abrp_token: null
   mqtt_server: null
