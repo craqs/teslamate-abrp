@@ -1,9 +1,10 @@
 name: Teslamate ABRP
-version: "1.1"
+version: "1.2"
 slug: teslamate-abrp
 description: Teslamate to ABRP integration
 arch:
   - aarch64
+init: false
 
 options:
   abrp_token: null
