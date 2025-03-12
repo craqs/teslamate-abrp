@@ -7,4 +7,4 @@ export MQTT_PASSWORD=$(bashio::config 'mqtt_password')
 export CAR_NUMBER=$(bashio::config 'car_number')
 export MODEL=$(bashio::config 'model')
 
-exec /usr/bin/python -u /app/teslamate_mqtt2abrp.py
+exec /usr/bin/python3 -u /app/teslamate_mqtt2abrp.py
