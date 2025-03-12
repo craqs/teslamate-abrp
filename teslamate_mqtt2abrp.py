@@ -1,7 +1,7 @@
 ## [ CLI with docopt ]
 """TeslaMate MQTT to ABRP
 
-Usage: 
+Usage:
     teslamate_mqtt2abrp.py [-hdlpsx] [USER_TOKEN] [CAR_NUMBER] [MQTT_SERVER] [MQTT_USERNAME] [MQTT_PASSWORD] [MQTT_PORT] [--model CAR_MODEL] [--status_topic TOPIC]
 
 Arguments:
@@ -67,21 +67,21 @@ def publish_to_mqtt(dataObject):
             payload=value,
             qos=1,
             retain=True
-        ) 
+        )
 
 def niceNow():
     return datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M:%S")
 
 ## [ PARAMETERS ]
-if arguments['-d'] is True or 'TM2ABRP_DEBUG' in os.environ: 
+if arguments['-d'] is True or 'TM2ABRP_DEBUG' in os.environ:
     log_level = logging.DEBUG
 else: log_level = logging.INFO
-logging.basicConfig(format='%(asctime)s: [%(levelname)s] %(message)s', 
+logging.basicConfig(format='%(asctime)s: [%(levelname)s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=log_level)
 logging.debug("Logging level set to DEBUG.")
 
-if (arguments['-l'] is True or arguments['-p'] is True) and arguments['MQTT_USERNAME'] is not None: 
+if (arguments['-l'] is True or arguments['-p'] is True) and arguments['MQTT_USERNAME'] is not None:
     MQTTUSERNAME = arguments['MQTT_USERNAME']
 elif 'MQTT_USERNAME' in os.environ: MQTTUSERNAME = os.environ['MQTT_USERNAME']
 
@@ -92,12 +92,12 @@ elif getDockerSecret("MQTT_PASSWORD") is not None: MQTTPASSWORD = getDockerSecre
 
 if arguments['MQTT_SERVER'] is not None: MQTTSERVER = arguments['MQTT_SERVER']
 elif 'MQTT_SERVER' in os.environ: MQTTSERVER = os.environ['MQTT_SERVER']
-else: 
+else:
     sys.exit("MQTT server address not supplied. Please supply through ENV variables or CLI argument.")
 
 if arguments['MQTT_PORT'] is not None: MQTTPORT = int(arguments['MQTT_PORT'])
 elif 'MQTT_PORT' in os.environ: MQTTPORT = int(os.environ['MQTT_PORT'])
-else: 
+else:
     MQTTPORT = 1883
 
 if arguments['-s'] is True or 'MQTT_TLS' in os.environ:
@@ -108,7 +108,7 @@ else:
 if arguments['USER_TOKEN'] is not None: USERTOKEN = arguments['USER_TOKEN']
 elif 'USER_TOKEN' in os.environ: USERTOKEN = os.environ['USER_TOKEN']
 elif getDockerSecret('USER_TOKEN') is not None: USERTOKEN = getDockerSecret('USER_TOKEN')
-else: 
+else:
     sys.exit("User token not supplied. Please generate it through ABRP and supply through ENV variables or CLI argument.")
 
 if arguments['CAR_NUMBER'] is not None: CARNUMBER = arguments['CAR_NUMBER']
@@ -118,7 +118,7 @@ else:
     logging.info("Car number not supplied, defaulting to 1.")
 
 logging.debug("Arguments passed: {}".format(arguments))
-if arguments['--model'] is None: 
+if arguments['--model'] is None:
     if "CAR_MODEL" in os.environ: CARMODEL = os.environ["CAR_MODEL"]
     else: CARMODEL = None
 else: CARMODEL = arguments['--model']
@@ -277,7 +277,7 @@ def on_message(client, userdata, message):
                 # Unhandled
                 logging.debug("Unneeded topic: {} {}".format(message.topic, payload))
                 pass
-            
+
         # Calculate accurate power on AC charging
         if data["is_charging"] == True and data["is_dcfc"] == False and "voltage" in data and "current" in data:
             data["power"] = float(data["current"] * data["voltage"] * charger_phases) / 1000.0 * -1
@@ -286,7 +286,7 @@ def on_message(client, userdata, message):
 
     except:
         logging.critical("Unexpected exception while processing message: {} {} {}".format(sys.exc_info()[0], message.topic, message.payload))
-    
+
 # Starts the MQTT loop processing messages
 client.on_message = on_message
 client.on_connect = on_connect  # Define callback function for successful connection
@@ -312,7 +312,7 @@ def findCarModel():
         else:
             logging.warning("Your Model 3 trim could not be automatically determined. Trim reported as: {}.".format(data["trim_badging"]))
             return
-    
+
     # Handle model Y cases
     if data["model"] == "Y":
         if data["trim_badging"] == "74D":
@@ -361,7 +361,7 @@ def updateABRP():
     except Exception as ex:
         logging.critical("Unexpected exception while POSTing to ABRP API: {}".format(sys.exc_info()[0]))
         logging.debug("Error message from ABRP API POST request: {}".format(ex))
-        if BASETOPIC is not None: 
+        if BASETOPIC is not None:
             publish_to_mqtt({"{}_post_exception".format(prefix): ex})
             publish_to_mqtt({"{}_post_last_exception".format(prefix): niceNow()})
 
@@ -374,13 +374,13 @@ while True:
     if state != prev_state:
         i = 30
         logging.debug("Current car state changed to: {}.".format(state))
-    current_datetime = datetime.datetime.now(datetime.UTC)
+    current_datetime = datetime.datetime.now(datetime.timezone.utc)
     current_timetuple = current_datetime.timetuple()
     data["utc"] = calendar.timegm(current_timetuple) #utc timestamp must be in every message
     if state in ["parked", "online", "suspended", "asleep", "offline"]: #if parked, update every 30 cycles/seconds
-        if data["power"] != 0: #sometimes after charging the last power value is kept and not refreshed until the next drive or charge session. 
+        if data["power"] != 0: #sometimes after charging the last power value is kept and not refreshed until the next drive or charge session.
             data["power"] = 0.0
-        if data["speed"] > 0: #sometimes after driving the last speed value is kept and not refreshed until the next drive or charge session. 
+        if data["speed"] > 0: #sometimes after driving the last speed value is kept and not refreshed until the next drive or charge session.
             data["speed"] = 0
         if "kwh_charged" in data:
             del data["kwh_charged"]
