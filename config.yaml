@@ -1,0 +1,21 @@
+name: Teslamate ABRP
+version: "1.0"
+slug: teslamate-abrp
+description: Teslamate to ABRP integration
+arch:
+  - aarch64
+
+options:
+  abrp_token: null
+  mqtt_server: null
+  mqtt_username: null
+  mqtt_password: null
+  car_number: "1"
+  model: "tesla:my:23:awd:heatpump"
+schema:
+  abrp_token: password
+  mqtt_server: str
+  mqtt_username: str
+  mqtt_password: password
+  car_number: str
+  model: str

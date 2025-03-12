@@ -1,3 +1,5 @@
+[![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Fcraqs%2Fteslamate-abrp)
+
 # TeslaMate: MQTT to ABRP
 [![amd64+arm64 :alpha build](https://github.com/fetzu/teslamate-abrp/actions/workflows/build_alpha.yml/badge.svg)](https://github.com/fetzu/teslamate-abrp/actions/workflows/build_alpha.yml)
 [![amd64+arm64 :beta build](https://github.com/fetzu/teslamate-abrp/actions/workflows/build_beta.yml/badge.svg)](https://github.com/fetzu/teslamate-abrp/actions/workflows/build_beta.yml)
@@ -6,7 +8,7 @@
 [![](https://img.shields.io/docker/image-size/fetzu/teslamate-abrp/latest)](https://hub.docker.com/r/fetzu/teslamate-abrp)
 [![](https://img.shields.io/docker/pulls/fetzu/teslamate-abrp?color=%23099cec)](https://hub.docker.com/r/fetzu/teslamate-abrp)
 [![GitHub license](https://img.shields.io/github/license/fetzu/teslamate-abrp)](https://github.com/fetzu/teslamate-abrp/blob/main/LICENSE)
-  
+
 A slightly convoluted way of getting your vehicle data from [TeslaMate](https://github.com/teslamate-org/teslamate) to [ABRP](https://abetterrouteplanner.com/).
 
 
@@ -33,10 +35,10 @@ ABRP:
     - CAR_NUMBER=1
     - CAR_MODEL=s100d #NOTE: This is optional, see below
 ```
-  
+
 Make sure to adapt the following environment variables:
 
-- The first value MQTT_SERVER corresponds to the name of your MQTT service name ("mosquitto" in the doc).  
+- The first value MQTT_SERVER corresponds to the name of your MQTT service name ("mosquitto" in the doc).
 - The second values (USER_TOKEN) correspond to the value provided by ABRP.
 - The third value corresponds to your car number (1 if you only have a single car).
 - The last value corresponds to your car model. When this value is not set, the script will try to determine your car model automatically (this should work for Models S, X, 3 and Y with standard configs). __The detection is very bare-bones and will not take into account factors such as wheel type, heat pump, LFP battery. It is recommended you take a moment to find your car model on https://api.iternio.com/1/tlm/get_carmodels_list and use the corresponding key as a value for CAR_MODEL (e.g. "tesla:m3:20:bt37:heatpump" for a 2021 Model 3 LR).__
@@ -54,7 +56,7 @@ Then from the command line, navigate to the folder where your docker-compose.yml
 docker-compose pull ABRP
 docker-compose up -d ABRP
 ```
-  
+
 If all goes well, your car should be shown as online in ABRP after a minute. Logging should show "YYYY-MM-DD HH:MM:SS: [INFO] Connected with result code 0. Connection with MQTT server established.".
 
 #### 1.4 Security
@@ -92,10 +94,10 @@ services:
       - MQTT_PASSWORD # Instead of having your password in clear text, it's found in the file below
 
 secrets:
-# These text files contains the token/passwords, and nothing else. 
+# These text files contains the token/passwords, and nothing else.
 # They can be placed "anywhere" on the host system and protected by appropriate file permissions.
   USER_TOKEN:
-    file: ./path/to/abrp-token.txt 
+    file: ./path/to/abrp-token.txt
   MQTT_PASSWORD:
     file: ./path/to/abrp-mqtt-pass.txt
 ```
@@ -116,13 +118,13 @@ pip install -r requirements.txt
 
 #### 2.2 Running
 
-To run, you can either use the CLI. Please note that USER_TOKEN, CAR_NUMBER, CAR_MODEL and MQTT_SERVER are required arguments.  
-  
+To run, you can either use the CLI. Please note that USER_TOKEN, CAR_NUMBER, CAR_MODEL and MQTT_SERVER are required arguments.
+
 If you are using a MQTT server with username or authentication, pass the -l (to use MQTT_USERNAME only) or -p (for authentication with MQTT_USERNAME and MQTT_PASSWORD) options. [Be aware that passing a username and password on an MQTT server not set for it will cause the connection to fail](https://github.com/fetzu/teslamate-abrp/issues/25).
 
-  
+
 ```
-Usage: 
+Usage:
     teslamate_mqtt2abrp.py [-hdlpsx] [USER_TOKEN] [CAR_NUMBER] [MQTT_SERVER] [MQTT_USERNAME] [MQTT_PASSWORD] [MQTT_PORT] [--model CAR_MODEL] [--status_topic TOPIC]
 
 Arguments:
