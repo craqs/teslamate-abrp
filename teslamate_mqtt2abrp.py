@@ -273,6 +273,16 @@ def on_message(client, userdata, message):
                 data["kwh_charged"] = float(payload)
             case "charger_phases":
                 charger_phases = 3 if payload and int(payload) > 1 else 1 #Fixes processing error when transitioning out of charging
+            case "tpms_pressure_fr":
+                data["tire_pressure_fr"] = float(payload)*100
+            case "tpms_pressure_fl":
+                data["tire_pressure_fl"] = float(payload)*100
+            case "tpms_pressure_rr":
+                data["tire_pressure_rr"] = float(payload)*100
+            case "tpms_pressure_rl":
+                data["tire_pressure_rl"] = float(payload)*100
+            case "inside_temp":
+                data["cabin_temp"] = float(payload)
             case _:
                 # Unhandled
                 logging.debug("Unneeded topic: {} {}".format(message.topic, payload))
